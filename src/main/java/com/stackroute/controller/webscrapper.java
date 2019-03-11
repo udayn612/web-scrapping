@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import java.util.Collection;
 
 @RestController
 @Slf4j
+@CrossOrigin("*")
 public class webscrapper {
 
     private IntentService intentService;
@@ -29,29 +31,30 @@ public class webscrapper {
     }
 
 
-    @GetMapping("/data")
-    public String getDataFromWebsite(String data)
+    @GetMapping("/{data}")
+    public ArrayList<String> getDataFromWebsite(@PathVariable("data") String data)
     {
+        ArrayList<String> knowledgeTerms = new ArrayList<>();
         try {
-            Document doc= Jsoup.connect("https://thesaurus.plus/thesaurus/view").userAgent("mozilla/17.0").get();
+            Document doc= Jsoup.connect("https://thesaurus.plus/thesaurus/"+data+"/").userAgent("mozilla/17.0").get();
             Elements temp=doc.select("li.list_block");
-//            System.out.println("aaaaaaaaaaaaaaaaaaa");
-//            System.out.println(temp);
+
             int i=0;
             for(Element movieList:temp)
             {
                     i++;
                     if(i<11)
                     {
-                        System.out.println(i+" "+movieList.getElementsByTag("a").first().text());
+                        knowledgeTerms.add(movieList.getElementsByTag("a").first().text());
                     }
 
             }
 
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return "";
+        return knowledgeTerms;
     }
 
     @GetMapping("getIntentTerms/{IntentLevel}")
