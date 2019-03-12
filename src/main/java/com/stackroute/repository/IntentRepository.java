@@ -11,4 +11,7 @@ import java.util.Collection;
 public interface IntentRepository extends Neo4jRepository<Terms, Integer> {
     @Query("MATCH(u:Terms) RETURN u")
     Collection<Terms> getAllTerms();
+
+    @Query("MATCH(u:Terms) RETURN Count(*)")
+    String getCount();
 }

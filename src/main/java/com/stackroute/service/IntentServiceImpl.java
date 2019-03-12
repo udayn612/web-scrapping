@@ -20,6 +20,17 @@ public class IntentServiceImpl implements IntentService {
         this.intents = new ArrayList<>(intentRepository.getAllTerms());
     }
 
+
+    public void createTermNode(Terms term) {
+
+        intentRepository.save(term);
+    }
+
+
+    public String getCount() {
+        return intentRepository.getCount();
+    }
+
     /*
     This method will return all knowledge terms
     */
@@ -97,6 +108,8 @@ public class IntentServiceImpl implements IntentService {
         }
         return evaluationTerms;
     }
+
+
 }
 
 

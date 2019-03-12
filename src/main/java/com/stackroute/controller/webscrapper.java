@@ -1,11 +1,14 @@
 package com.stackroute.controller;
 
+import com.stackroute.domain.Terms;
 import com.stackroute.service.IntentService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,6 +60,55 @@ public class webscrapper {
         return knowledgeTerms;
     }
 
+    @GetMapping("/getcount")
+    public String getTermsCount()
+    {
+        return intentService.getCount();
+    }
+
+    @GetMapping("insertTerm/{intent}/{term}/{synonym}/{score}")
+    public ResponseEntity<String> saveTermsToDb(@PathVariable("intent") String intent,
+                              @PathVariable("term") String term,
+                              @PathVariable("synonym") String Synonym,
+                              @PathVariable("score")  String score)
+    {
+
+
+        String parent_id="SPRING:1";
+
+
+        if(intent.equalsIgnoreCase("knowledge"))
+        {
+            parent_id="SPRING:2";
+        }
+        else if(intent.equalsIgnoreCase("comprehension"))
+        {
+            parent_id="SPRING:3";
+        }
+        else if(intent.equalsIgnoreCase("Analysis"))
+        {
+            parent_id="SPRING:4";
+        }
+        else if(intent.equalsIgnoreCase("Application"))
+        {
+            parent_id="SPRING:5";
+        }
+        else if(intent.equalsIgnoreCase("Synthesis"))
+        {
+            parent_id="SPRING:6";
+        }
+        else if(intent.equalsIgnoreCase("Evaluation"))
+        {
+            parent_id="SPRING:7";
+        }
+
+        String Id=intentService.getCount();
+
+        Terms term1=new Terms((Integer.parseInt(Id)+1),Synonym,parent_id,intent,"term","indicatorOf",score);
+        intentService.createTermNode(term1);
+        System.out.println(term1);
+        return  new ResponseEntity<String>("Inserted term Successfully", HttpStatus.OK);
+    }
     @GetMapping("getIntentTerms/{IntentLevel}")
     public Collection<String> getIntentTerms(@PathVariable("IntentLevel") String IntentLevel)
     {
