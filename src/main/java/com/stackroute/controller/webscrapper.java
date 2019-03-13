@@ -2,6 +2,7 @@ package com.stackroute.controller;
 
 import com.stackroute.domain.Terms;
 import com.stackroute.service.IntentService;
+import com.stackroute.service.NodeCreatorService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,11 +27,14 @@ import java.util.Collection;
 public class webscrapper {
 
     private IntentService intentService;
+    private NodeCreatorService nodeCreatorService;
 
     @Autowired
-    webscrapper(IntentService intentService)
+    webscrapper(IntentService intentService,NodeCreatorService nodeCreatorService)
+
     {
         this.intentService=intentService;
+        this.nodeCreatorService=nodeCreatorService;
     }
 
 
@@ -106,9 +110,13 @@ public class webscrapper {
 
         Terms term1=new Terms((Integer.parseInt(Id)+1),Synonym,parent_id,intent,"term","indicatorOf",score);
         intentService.createTermNode(term1);
+        nodeCreatorService.insertRelationship(Synonym,intent);
         System.out.println(term1);
         return  new ResponseEntity<String>("Inserted term Successfully", HttpStatus.OK);
     }
+
+
+
     @GetMapping("getIntentTerms/{IntentLevel}")
     public Collection<String> getIntentTerms(@PathVariable("IntentLevel") String IntentLevel)
     {

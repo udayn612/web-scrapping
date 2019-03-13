@@ -11,6 +11,8 @@ public interface NodeCreatorService {
 
     public Collection<String> getParentNode();
 
+    public String insertRelationship(String name,String IntentLevel);
+
 
 
 }
