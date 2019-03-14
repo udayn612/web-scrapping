@@ -13,4 +13,13 @@ public interface ConceptRepository extends Neo4jRepository<Concept, Integer> {
 
     @Query("match(c:Concept) return c")
     Collection<Concept> getAllNodes();
+
+    @Query("match(c:Concept{name:{0}}) return c")
+    Concept getPerticularNode(String name);
+
+    @Query("MATCH(u:Concept) RETURN Count(*)")
+    String getConceptNodeCount();
+
+    @Query("MATCH(u:Concept{name:{0}}) MATCH(n:Concept{name:{1}}) CREATE(u)-[:subconceptOf]->(n)")
+    String insertConceptRelationship(String childName,String parentName);
 }

@@ -11,8 +11,13 @@ public interface NodeCreatorService {
 
     public Collection<String> getParentNode();
 
+    public String getConceptNodeCount();
+
     public String insertRelationship(String name,String IntentLevel);
 
+    public String insertConceptRelationship(String childName,String parentName);
 
+
+    public Concept getPerticularNode(String name);
 
 }

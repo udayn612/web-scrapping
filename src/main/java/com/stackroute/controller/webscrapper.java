@@ -1,5 +1,6 @@
 package com.stackroute.controller;
 
+import com.stackroute.domain.Concept;
 import com.stackroute.domain.Terms;
 import com.stackroute.service.IntentService;
 import com.stackroute.service.NodeCreatorService;
@@ -70,49 +71,70 @@ public class webscrapper {
         return intentService.getCount();
     }
 
-    @GetMapping("insertTerm/{intent}/{term}/{synonym}/{score}")
+    @GetMapping("insertTerm/{intent}/{synonym}/{score}")
     public ResponseEntity<String> saveTermsToDb(@PathVariable("intent") String intent,
-                              @PathVariable("term") String term,
                               @PathVariable("synonym") String Synonym,
                               @PathVariable("score")  String score)
     {
 
-
+        String intentLevel = intent.substring(0,1).toUpperCase() + intent.substring(1).toLowerCase();
+        System.out.println("Inside my function");
         String parent_id="SPRING:1";
 
 
-        if(intent.equalsIgnoreCase("knowledge"))
+        if(intentLevel.equalsIgnoreCase("knowledge"))
         {
             parent_id="SPRING:2";
         }
-        else if(intent.equalsIgnoreCase("comprehension"))
+        else if(intentLevel.equalsIgnoreCase("comprehension"))
         {
             parent_id="SPRING:3";
         }
-        else if(intent.equalsIgnoreCase("Analysis"))
+        else if(intentLevel.equalsIgnoreCase("Analysis"))
         {
             parent_id="SPRING:4";
         }
-        else if(intent.equalsIgnoreCase("Application"))
+        else if(intentLevel.equalsIgnoreCase("Application"))
         {
             parent_id="SPRING:5";
         }
-        else if(intent.equalsIgnoreCase("Synthesis"))
+        else if(intentLevel.equalsIgnoreCase("Synthesis"))
         {
             parent_id="SPRING:6";
         }
-        else if(intent.equalsIgnoreCase("Evaluation"))
+        else if(intentLevel.equalsIgnoreCase("Evaluation"))
         {
             parent_id="SPRING:7";
         }
 
         String Id=intentService.getCount();
 
-        Terms term1=new Terms((Integer.parseInt(Id)+1),Synonym,parent_id,intent,"term","indicatorOf",score);
+        Terms term1=new Terms((Integer.parseInt(Id)+1),Synonym,parent_id,intentLevel,"term","indicatorOf",score);
         intentService.createTermNode(term1);
-        nodeCreatorService.insertRelationship(Synonym,intent);
+        nodeCreatorService.insertRelationship(Synonym,intentLevel);
+
         System.out.println(term1);
         return  new ResponseEntity<String>("Inserted term Successfully", HttpStatus.OK);
+    }
+
+
+    @GetMapping("createConcept/{parentName}/{name}/")
+    public ResponseEntity<String> saveConceptsToDb(@PathVariable("parentName") String parentName,
+                                                @PathVariable("name") String name)
+    {
+        Concept getPerticularConcept=nodeCreatorService.getPerticularNode(parentName);
+
+
+        String nodeId=nodeCreatorService.getConceptNodeCount();
+
+        String parentId=getPerticularConcept.getParentId();
+        Concept concept=new Concept(
+            Integer.parseInt(nodeId),name,parentId,"subconcept of","concept",parentName,"concept"
+
+        );
+        nodeCreatorService.createConceptNode(concept);
+        nodeCreatorService.insertConceptRelationship(name,parentName);
+        return  new ResponseEntity<String>("Inserted Concept Successfully", HttpStatus.OK);
     }
 
 

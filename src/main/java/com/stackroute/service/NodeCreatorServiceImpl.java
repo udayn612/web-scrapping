@@ -43,9 +43,25 @@ public class NodeCreatorServiceImpl implements NodeCreatorService {
     }
 
     @Override
+    public String getConceptNodeCount() {
+        return conceptRepository.getConceptNodeCount();
+    }
+
+    @Override
     public String insertRelationship(String name, String IntentLevel) {
         intentRepository.insertRelationship(name,IntentLevel);
         return "Relationship inserted successfully";
+    }
+
+    @Override
+    public String insertConceptRelationship(String childName, String parentName) {
+        conceptRepository.insertConceptRelationship(childName,parentName);
+        return "Relationship inserted successfully";
+    }
+
+    @Override
+    public Concept getPerticularNode(String name) {
+        return conceptRepository.getPerticularNode(name);
     }
 
 
